@@ -12,10 +12,10 @@ class App extends Component {
 		this.state = {
 			sessionLength: 25,
 			breakLength: 5,
-      sessionTimer: 25,
-      time: 25 * 60
-    };
-    
+			sessionTimer: 25,
+			time: 25 * 60,
+		};
+
 		this.breakIncrement = this.breakIncrement.bind(this);
 		this.breakDecrement = this.breakDecrement.bind(this);
 		this.sessionIncrement = this.sessionIncrement.bind(this);
@@ -44,7 +44,7 @@ class App extends Component {
 		if (this.state.sessionLength >= 0 && this.state.sessionLength < 60) {
 			this.setState({
 				sessionLength: this.state.sessionLength + 1,
-        sessionTimer: this.state.sessionTimer + 1,
+				sessionTimer: this.state.sessionTimer + 1,
 			});
 		}
 	}
@@ -59,22 +59,22 @@ class App extends Component {
 	}
 
 	updateCountDown() {
-    // let time = parseInt(this.state.sessionTimer) * 60;
-    // console.log(time);
+		// let time = parseInt(this.state.sessionTimer) * 60;
+		// console.log(time);
 		let minutes = Math.floor(this.state.time / 60);
 		let seconds = this.state.time % 60;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
+		seconds = seconds < 10 ? '0' + seconds : seconds;
 		this.setState({
-      sessionTimer: `${minutes} : ${seconds}`,
-      time: this.state.time-1
+			sessionTimer: `${minutes} : ${seconds}`,
+			time: this.state.time - 1,
 		});
-    // time--;
-    // time = time < 0 ? 0 : time;
-    if (this.state.time < 0) {
-      this.setState({
-        time: 0
-      })
-    }
+		// time--;
+		// time = time < 0 ? 0 : time;
+		if (this.state.time < 0) {
+			this.setState({
+				time: 0,
+			});
+		}
 	}
 
 	onClickStart() {
