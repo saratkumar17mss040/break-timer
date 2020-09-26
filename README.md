@@ -1,3 +1,22 @@
+## Break Timer
+
+A simple react break timer web application which let's you set breaks and session  in minutes, start, pause,reset the time and notifies you when the time ends  - through the alarm !
+
+## To run the project:
+
+1. Clone this repo
+2. Run `npm install`
+3. Run `npm start`
+
+
+### How will users interact with your web application ?
+
+Users will be able to set the breaks and session length by clicking on the buttons and they can alo start, pause, stop, reset the time.
+
+### Tech Stack 
+
+React
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
