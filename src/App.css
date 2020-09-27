@@ -1,7 +1,67 @@
-.App {
-  width: 800px;
-  height: 700px;
-  background-color: aqua;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+* {
+	box-sizing: border-box;
 }
 
+body {
+	background-color: #22a6b3;
+	font-family: 'Poppins', sans-serif;
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #ffffff;
+	text-align: center;
+}
 
+.flex {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.timer-container {
+	margin: -50px 20px 20px;
+}
+
+.timer-container h2 {
+	margin: 0;
+}
+
+.actions-wrapper span {
+	font-size: 30px;
+	margin: 0 10px;
+	width: 50px;
+}
+
+button {
+	background-color: transparent;
+	cursor: pointer;
+	color: #fff;
+	font-size: 18px;
+	background-color: tomato;
+	padding: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	border: none;
+	margin: 10px;
+}
+
+.clock-container {
+	border: 4px solid #ffffff;
+	display: inline-block;
+	padding: 10px 30px;
+	border-radius: 10px;
+	width: 400px;
+}
+
+.clock-container span {
+	padding: 10px;
+	/* display: inline-block; */
+	font-size: 50px;
+}
+
+.clock-container h1 {
+	margin: 0;
+}

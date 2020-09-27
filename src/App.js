@@ -1,102 +1,187 @@
 import React, { Component } from 'react';
-import BreakLength from './BreakLength';
-import SessionLength from './SessionLength';
-import SessionTimer from './SessionTimer';
-import SessionButtons from './SessionButtons';
-
+import SetTimer from './SetTimer';
 import './App.css';
 
+const audio = document.getElementById('beep');
+
 class App extends Component {
-	constructor() {
-		super();
-		this.state = {
-			sessionLength: 25,
-			breakLength: 5,
-			sessionTimer: 25,
-			time: 25 * 60,
-		};
+	state = {
+		breakCount: 5,
+		sessionCount: 25,
+		clockCount: 25 * 60,
+		currentTimer: 'Session',
+		isPlaying: false,
+	};
 
-		this.breakIncrement = this.breakIncrement.bind(this);
-		this.breakDecrement = this.breakDecrement.bind(this);
-		this.sessionIncrement = this.sessionIncrement.bind(this);
-		this.sessionDecrement = this.sessionDecrement.bind(this);
-		this.onClickStart = this.onClickStart.bind(this);
-		this.updateCountDown = this.updateCountDown.bind(this);
+	constructor(props) {
+		super(props);
+		this.loop = undefined;
 	}
 
-	breakIncrement() {
-		if (this.state.breakLength >= 0 && this.state.breakLength < 60) {
+	componentWillUnmount() {
+		clearInterval(this.loop);
+	}
+
+	handlePlayPause = () => {
+		const { isPlaying } = this.state;
+		if (isPlaying) {
+			clearInterval(this.loop);
 			this.setState({
-				breakLength: this.state.breakLength + 1,
+				isPlaying: false,
 			});
-		}
-	}
-
-	breakDecrement() {
-		if (this.state.breakLength > 0) {
+		} else {
 			this.setState({
-				breakLength: this.state.breakLength - 1,
+				isPlaying: true,
 			});
+			this.loop = setInterval(() => {
+				const {
+					clockCount,
+					currentTimer,
+					sessionCount,
+					breakCount,
+				} = this.state;
+				if (clockCount === 0) {
+					this.setState({
+						currentTimer: currentTimer === 'Session' ? 'Break' : 'Session',
+						clockCount:
+							currentTimer === 'Session' ? breakCount * 60 : sessionCount * 60,
+					});
+					audio.play();
+				} else {
+					this.setState({
+						clockCount: clockCount - 1,
+					});
+				}
+			}, 1000);
 		}
-	}
+	};
 
-	sessionIncrement() {
-		if (this.state.sessionLength >= 0 && this.state.sessionLength < 60) {
-			this.setState({
-				sessionLength: this.state.sessionLength + 1,
-				sessionTimer: this.state.sessionTimer + 1,
-			});
-		}
-	}
-
-	sessionDecrement() {
-		if (this.state.sessionLength > 0) {
-			this.setState({
-				sessionLength: this.state.sessionLength - 1,
-				sessionTimer: this.state.sessionTimer - 1,
-			});
-		}
-	}
-
-	updateCountDown() {
-		// let time = parseInt(this.state.sessionTimer) * 60;
-		// console.log(time);
-		let minutes = Math.floor(this.state.time / 60);
-		let seconds = this.state.time % 60;
-		seconds = seconds < 10 ? '0' + seconds : seconds;
+	handlePlayReset = () => {
 		this.setState({
-			sessionTimer: `${minutes} : ${seconds}`,
-			time: this.state.time - 1,
+			breakCount: 5,
+			sessionCount: 25,
+			clockCount: 25 * 60,
+			currentTimer: 'Session',
+			isPlaying: false,
 		});
-		// time--;
-		// time = time < 0 ? 0 : time;
-		if (this.state.time < 0) {
-			this.setState({
-				time: 0,
-			});
-		}
-	}
+		clearInterval(this.loop);
+		audio.pause();
+		audio.currentTime = 0;
+	};
 
-	onClickStart() {
-		setInterval(this.updateCountDown, 1000);
-	}
+	convertToTime = (count) => {
+		let minutes = Math.floor(count / 60);
+		let seconds = count % 60;
+		minutes = minutes < 10 ? '0' + minutes : minutes;
+		seconds = seconds < 10 ? '0' + seconds : seconds;
+		return `${minutes}:${seconds}`;
+	};
+
+	handleBreakDecrease = () => {
+		const { breakCount, isPlaying, currentTimer } = this.state;
+		if (breakCount > 1) {
+			if (!isPlaying && currentTimer === 'Break') {
+				this.setState({
+					breakCount: breakCount - 1,
+					clockCount: (breakCount - 1) * 60,
+				});
+			} else {
+				this.setState({
+					breakCount: breakCount - 1,
+				});
+			}
+		}
+	};
+
+	handleBreakIncrease = () => {
+		const { breakCount, isPlaying, currentTimer } = this.state;
+		if (breakCount < 60) {
+			if (!isPlaying && currentTimer === 'Break') {
+				this.setState({
+					breakCount: breakCount + 1,
+					clockCount: (breakCount + 1) * 60,
+				});
+			} else {
+				this.setState({
+					breakCount: breakCount + 1,
+				});
+			}
+		}
+	};
+
+	handleSessionIncrease = () => {
+		const { sessionCount, isPlaying, currentTimer } = this.state;
+		if (sessionCount < 60) {
+			if (!isPlaying && currentTimer === 'Session') {
+				this.setState({
+					sessionCount: sessionCount + 1,
+					clockCount: (sessionCount + 1) * 60,
+				});
+			} else {
+				this.setState({
+					sessionCount: sessionCount + 1,
+				});
+			}
+		}
+	};
+
+	handleSessionDecrease = () => {
+		const { sessionCount, currentTimer, isPlaying } = this.state;
+		if (sessionCount > 1) {
+			if (!isPlaying && currentTimer === 'Session') {
+				this.setState({
+					sessionCount: sessionCount - 1,
+					clockCount: (sessionCount - 1) * 60,
+				});
+			} else {
+				this.setState({
+					sessionCount: sessionCount - 1,
+				});
+			}
+		}
+	};
 
 	render() {
+		const {
+			breakCount,
+			sessionCount,
+			clockCount,
+			currentTimer,
+			isPlaying,
+		} = this.state;
+
+		const breakProps = {
+			title: 'Break',
+			count: breakCount,
+			handleDecrease: this.handleBreakDecrease,
+			handleIncrease: this.handleBreakIncrease,
+		};
+
+		const sessionProps = {
+			title: 'Session',
+			count: sessionCount,
+			handleDecrease: this.handleSessionDecrease,
+			handleIncrease: this.handleSessionIncrease,
+		};
+
 		return (
-			<div className="App">
-				<h3 style={{ textAlign: 'center' }}>Break Timer</h3>
-				<BreakLength
-					breakLength={this.state.breakLength}
-					breakIncrement={this.breakIncrement}
-					breakDecrement={this.breakDecrement}
-				/>
-				<SessionLength
-					sessionLength={this.state.sessionLength}
-					sessionIncrement={this.sessionIncrement}
-					sessionDecrement={this.sessionDecrement}
-				/>
-				<SessionTimer sessionTimer={this.state.sessionTimer} />
-				<SessionButtons onClickStart={this.onClickStart} />
+			<div>
+				<div className="flex">
+					<SetTimer {...breakProps} />
+					<SetTimer {...sessionProps} />
+				</div>
+				<div className="clock-container">
+					<h1 id="timer-label">{currentTimer}</h1>
+					<span id="time-left">{this.convertToTime(clockCount)}</span>
+					<div className="flex">
+						<button id="start_stop" onClick={this.handlePlayPause}>
+							<i className={`fa fa-${isPlaying ? 'pause' : 'play'}`}></i>
+						</button>
+						<button id="reset" onClick={this.handlePlayReset}>
+							<i className="fa fa-refresh"></i>
+						</button>
+					</div>
+				</div>
 			</div>
 		);
 	}
