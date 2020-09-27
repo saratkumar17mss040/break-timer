@@ -165,7 +165,8 @@ class App extends Component {
 		};
 
 		return (
-			<div>
+			<div className="main-container">
+				<h1>Break Timer</h1>
 				<div className="flex">
 					<SetTimer {...breakProps} />
 					<SetTimer {...sessionProps} />
