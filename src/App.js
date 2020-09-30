@@ -8,7 +8,7 @@ class App extends Component {
 	state = {
 		breakCount: 5,
 		sessionCount: 25,
-		clockCount: 3,
+		clockCount: 25 * 60,
 		currentTimer: 'Session',
 		isPlaying: false,
 	};
